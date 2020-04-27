@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Excel_Reader.Models;
 using ExcelReporter.App;
 using ExcelReporter.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -38,12 +39,12 @@ namespace ExcelReporter.Controllers
             return "value";
         }
 
-        // POST: api/ReportStatements
-        [HttpPost]
-        public IEnumerable<string> Post([FromBody] string reportPath)
+        // POST: api/ReportStatements/{userLogin}
+        [HttpPost("{userLogin}")]
+        public IEnumerable<ProjectSheet> Post(string userLogin, [FromBody] string reportPath)
         {
             FileInfo fileInfo = new FileInfo(reportPath);
-            var sheetList = _reportManager.LogReport(fileInfo);
+            var sheetList = _reportManager.GetReportDataFromFile(fileInfo, userLogin);
 
             return sheetList;
         }

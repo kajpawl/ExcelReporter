@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Excel_Reader.Models
 {
     public class ReportStatement
     {
-        public string Id { get; set; }
-        public int UserId { get; set; }
+        [Key]
+        public string UserLogin { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string DomainLogin { get; set; }
         public List<ProjectSheet> ProjectSheets { get; set; }
     }
 }

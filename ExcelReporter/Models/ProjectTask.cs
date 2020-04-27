@@ -9,7 +9,7 @@ namespace Excel_Reader.Models
         public string? Others { get; set; }
         public override string ToString()
         {
-            return ProjectSheetId.ToString() + ", " + UserId.ToString() + ", " + TaskId + ", " + Name + ", " + Description + ", " + DateStarted + ", " + DateEnded + ", " + Others;
+            return ProjectSheetId.ToString() + ", " + UserLogin + ", " + TaskId + ", " + Name + ", " + Description + ", " + DateStarted + ", " + DateEnded + ", " + Others;
         }
     }
 }

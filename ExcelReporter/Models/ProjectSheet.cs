@@ -6,7 +6,7 @@ namespace Excel_Reader.Models
     public class ProjectSheet
     {
         public string Id { get; set; }
-        public int UserId { get; set; }
+        public string UserLogin { get; set; }
         public string ProjectName { get; set; }
         public List<ProjectTask> Tasks { get; set; }
         public List<Holiday> Holidays { get; set; }

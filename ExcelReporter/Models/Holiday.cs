@@ -6,7 +6,7 @@
         public new string? DateEnded { get; set; }
         public override string ToString()
         {
-            return ProjectSheetId.ToString() + ", " + UserId.ToString() + ", " + Id + ", " + Name + ", " + DateStarted + ", " + DateEnded;
+            return ProjectSheetId.ToString() + ", " + UserLogin + ", " + Id + ", " + Name + ", " + DateStarted + ", " + DateEnded;
         }
     }
 }
