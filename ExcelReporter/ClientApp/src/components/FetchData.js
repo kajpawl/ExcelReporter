@@ -60,14 +60,28 @@ export class FetchData extends Component {
     const data = await response.json();
       this.setState({ forecasts: data, loading: false });
 
-    const reqBody = 'D:/file.xlsx';
-    fetch('api/ReportStatements/testUser', {
-      method: "post",
+    // const reqBody = 'D:/file.xlsx';
+    //fetch('api/ReportStatements/testUser', {
+    //  method: "post",
+    //  headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    //  body: JSON.stringify(reqBody)
+    //}).then(res => res.json())
+    //  .then(res => {
+    //    console.log(res);
+    //  })
+
+    const userName = 'testUser';
+    fetch(`api/ReportStatements/${userName}/GetFile`, {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(reqBody)
-    }).then(res => res.json())
-      .then(res => {
-        console.log(res);
-      })
+    }).then(response => response.blob())
+      .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = userName + '.xlsx';
+      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+      a.click();
+      a.remove();
+    })
   }
 }

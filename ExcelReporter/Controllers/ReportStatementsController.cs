@@ -8,6 +8,7 @@ using ExcelReporter.App;
 using ExcelReporter.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExcelReporter.Controllers
 {
@@ -50,7 +51,6 @@ namespace ExcelReporter.Controllers
                 reportsByPeople.Add(reportStatement);
             }
 
-
             return reportsByPeople;
         }
 
@@ -73,16 +73,22 @@ namespace ExcelReporter.Controllers
             return reportStatement;
         }
 
-        // GET: api/ReportStatements/GetFile/{userLogin}
-        [HttpGet("{userLogin}")]
+        // GET: api/ReportStatements/{userLogin}/GetFile
+        [HttpGet("{userLogin}/GetFile")]
         public FileResult GetFile(string userLogin)
         {
-            var reports = _context.ProjectSheets.Where(r => r.UserLogin == userLogin).ToList();
+            var reports = _context.ProjectSheets.Where(r => r.UserLogin == userLogin)
+                .Include(r => r.Tasks).Include(r => r.Holidays).ToList();
+
             var filePath = _reportToExcelManager.GenerateExcelFile(reports, userLogin);
             var fileName = userLogin + ".xlsx";
             var mimeType = "application/vnd.ms-excel";
 
-            return File(new FileStream(filePath, FileMode.Open), mimeType, fileName);
+            // return File(new FileStream(filePath, FileMode.Open), mimeType, fileName);
+
+            var bytes = System.IO.File.ReadAllBytes(filePath);
+            return File(bytes, "application/octet-stream", fileName);
+
         }
 
         // POST: api/ReportStatements/{userLogin}
@@ -104,16 +110,46 @@ namespace ExcelReporter.Controllers
             return sheetList;
         }
 
-        // PUT: api/ReportStatements/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT: api/ReportStatements/{userLogin}
+        [HttpPut("{userLogin}")]
+        public async Task<IEnumerable<ProjectSheet>> Put(string userLogin, [FromBody] string reportPath)
         {
+            FileInfo fileInfo = new FileInfo(reportPath);
+            var sheetList = _reportToDbManager.GetReportDataFromFile(fileInfo, userLogin);
+
+            foreach (var sheet in sheetList)
+            {
+                var sheetToUpdate = _context.ProjectSheets.SingleOrDefault(
+                    r => r.UserLogin == userLogin && r.ProjectName == sheet.ProjectName);
+
+                if (sheetToUpdate == null)
+                    _context.ProjectSheets.Add(sheet);
+                // TO DO: Need to remove duplicate values
+                // else
+                // {
+                //     sheetToUpdate.Tasks = sheet.Tasks;
+                //     sheetToUpdate.Holidays = sheet.Holidays;
+                // }
+            }
+            await _context.SaveChangesAsync();
+
+            return sheetList;
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE: api/ApiWithActions/userLogin
+        [HttpDelete("{userLogin}")]
+        public async Task<ActionResult> Delete(string userLogin, [FromBody] string projectName)
         {
+            var sheetToDelete = _context.ProjectSheets.SingleOrDefault(
+                r => r.UserLogin == userLogin && r.ProjectName == projectName);
+
+            if (sheetToDelete != null)
+            {
+                _context.ProjectSheets.Remove(sheetToDelete);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
         }
     }
 }
