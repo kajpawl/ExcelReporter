@@ -6,7 +6,7 @@ using System.IO;
 
 namespace ExcelReporter.App
 {
-    public class ReportManager
+    public class ReportToDbManager
     {
         public IEnumerable<ProjectSheet> GetReportDataFromFile(FileInfo fileInfo, string domainLogin)
         {
@@ -32,7 +32,7 @@ namespace ExcelReporter.App
         {
             var projectSheet = new ProjectSheet
             {
-                Id = Guid.NewGuid().ToString(),
+                ProjectSheetId = Guid.NewGuid().ToString(),
                 UserLogin = userId,
                 ProjectName = sheet.Name,
                 Tasks = new List<ProjectTask>(),
@@ -63,7 +63,9 @@ namespace ExcelReporter.App
         {
             var task = new ProjectTask
             {
-                ProjectSheetId = projectSheet.Id,
+                Id = Guid.NewGuid().ToString(),
+                ProjectSheetId = projectSheet.ProjectSheetId,
+                ProjectSheet = projectSheet,
                 UserLogin = projectSheet.UserLogin,
                 Name = sheet.Cells[i, 2].Value.ToString(),
                 DateStarted = sheet.Cells[i, 4].Value.ToString(),
@@ -95,9 +97,10 @@ namespace ExcelReporter.App
         {
             var holiday = new Holiday
             {
-                ProjectSheetId = projectSheet.Id,
-                UserLogin = projectSheet.UserLogin,
-                Id = Guid.NewGuid().ToString()
+                Id = Guid.NewGuid().ToString(),
+                ProjectSheetId = projectSheet.ProjectSheetId,
+                ProjectSheet = projectSheet,
+                UserLogin = projectSheet.UserLogin
             };
             var holidayName = "";
 

@@ -15,8 +15,9 @@ namespace ExcelReporter.Data
         {
         }
 
-        public DbSet<ReportStatement> ReportStatements { get; set; }
         public DbSet<ProjectSheet> ProjectSheets { get; set; }
         public DbSet<ProjectTask> ProjectTasks { get; set; }
+        public DbSet<Holiday> Holidays { get; set; }
+
     }
 }

@@ -4,14 +4,16 @@ using ExcelReporter.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ExcelReporter.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200427140345_update models")]
+    partial class updatemodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,7 +115,7 @@ namespace ExcelReporter.Data.Migrations
 
             modelBuilder.Entity("Excel_Reader.Models.ProjectSheet", b =>
                 {
-                    b.Property<string>("ProjectSheetId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProjectName")
@@ -122,7 +124,7 @@ namespace ExcelReporter.Data.Migrations
                     b.Property<string>("UserLogin")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProjectSheetId");
+                    b.HasKey("Id");
 
                     b.ToTable("ProjectSheets");
                 });
@@ -382,14 +384,14 @@ namespace ExcelReporter.Data.Migrations
 
             modelBuilder.Entity("Excel_Reader.Models.Holiday", b =>
                 {
-                    b.HasOne("Excel_Reader.Models.ProjectSheet", "ProjectSheet")
+                    b.HasOne("Excel_Reader.Models.ProjectSheet", null)
                         .WithMany("Holidays")
                         .HasForeignKey("ProjectSheetId");
                 });
 
             modelBuilder.Entity("Excel_Reader.Models.ProjectTask", b =>
                 {
-                    b.HasOne("Excel_Reader.Models.ProjectSheet", "ProjectSheet")
+                    b.HasOne("Excel_Reader.Models.ProjectSheet", null)
                         .WithMany("Tasks")
                         .HasForeignKey("ProjectSheetId");
                 });

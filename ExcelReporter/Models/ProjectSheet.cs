@@ -5,7 +5,7 @@ namespace Excel_Reader.Models
 {
     public class ProjectSheet
     {
-        public string Id { get; set; }
+        public string ProjectSheetId { get; set; }
         public string UserLogin { get; set; }
         public string ProjectName { get; set; }
         public List<ProjectTask> Tasks { get; set; }
@@ -13,7 +13,7 @@ namespace Excel_Reader.Models
         public override string ToString()
         {
             Tasks.ForEach(t => Console.WriteLine(t.ToString()));
-            return Id + ", " + ProjectName + ", ";
+            return ProjectSheetId + ", " + ProjectName + ", ";
         }
     }
 }
