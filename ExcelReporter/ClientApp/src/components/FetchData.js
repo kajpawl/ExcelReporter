@@ -57,6 +57,15 @@ export class FetchData extends Component {
     const response = await fetch('weatherforecast', {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
     });
+    const reqBody = 'D:/file.xlsx';
+    fetch('api/ReportStatements', {
+      method: "post",
+      headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(reqBody)
+    }).then(res => res.json())
+      .then(res => {
+        console.log(res);
+      })
     const data = await response.json();
     this.setState({ forecasts: data, loading: false });
   }

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Excel_Reader.Models
 {
-    class ReportStatement
+    public class ReportStatement
     {
+        public string Id { get; set; }
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string DomainLogin { get; set; }
-        public List<Guid> ProjectSheetIds { get; set; }
+        public List<ProjectSheet> ProjectSheets { get; set; }
     }
 }

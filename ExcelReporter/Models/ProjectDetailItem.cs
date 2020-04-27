@@ -1,10 +1,9 @@
-﻿using System;
-
-namespace Excel_Reader.Models
+﻿namespace Excel_Reader.Models
 {
     public class ProjectDetailItem
     {
-        public Guid ProjectSheetId { get; set; }
+        public string Id { get; set; }
+        public string ProjectSheetId { get; set; }
         public int UserId { get; set; }
         public string Name { get; set; }
         public string DateStarted { get; set; }

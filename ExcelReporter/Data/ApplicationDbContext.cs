@@ -1,12 +1,9 @@
-﻿using ExcelReporter.Models;
+﻿using Excel_Reader.Models;
+using ExcelReporter.Models;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExcelReporter.Data
 {
@@ -17,5 +14,9 @@ namespace ExcelReporter.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<ReportStatement> ReportStatements { get; set; }
+        public DbSet<ProjectSheet> ProjectSheets { get; set; }
+        public DbSet<ProjectTask> ProjectTasks { get; set; }
     }
 }
