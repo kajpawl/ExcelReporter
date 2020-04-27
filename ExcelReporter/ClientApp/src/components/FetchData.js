@@ -60,7 +60,7 @@ export class FetchData extends Component {
     const data = await response.json();
       this.setState({ forecasts: data, loading: false });
 
-    // const reqBody = 'D:/file.xlsx';
+    //const reqBody = 'D:/file.xlsx';
     //fetch('api/ReportStatements/testUser', {
     //  method: "post",
     //  headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },

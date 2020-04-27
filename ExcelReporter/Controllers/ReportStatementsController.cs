@@ -82,12 +82,10 @@ namespace ExcelReporter.Controllers
 
             var filePath = _reportToExcelManager.GenerateExcelFile(reports, userLogin);
             var fileName = userLogin + ".xlsx";
-            var mimeType = "application/vnd.ms-excel";
-
-            // return File(new FileStream(filePath, FileMode.Open), mimeType, fileName);
+            var mimeType = "application/octet-stream";
 
             var bytes = System.IO.File.ReadAllBytes(filePath);
-            return File(bytes, "application/octet-stream", fileName);
+            return File(bytes, mimeType, fileName);
 
         }
 
@@ -119,17 +117,20 @@ namespace ExcelReporter.Controllers
 
             foreach (var sheet in sheetList)
             {
-                var sheetToUpdate = _context.ProjectSheets.SingleOrDefault(
+                var sheetToUpdate = _context.ProjectSheets
+                    .Include(r => r.Tasks).Include(r => r.Holidays).SingleOrDefault(
                     r => r.UserLogin == userLogin && r.ProjectName == sheet.ProjectName);
 
                 if (sheetToUpdate == null)
                     _context.ProjectSheets.Add(sheet);
-                // TO DO: Need to remove duplicate values
-                // else
-                // {
-                //     sheetToUpdate.Tasks = sheet.Tasks;
-                //     sheetToUpdate.Holidays = sheet.Holidays;
-                // }
+                else
+                {
+                    sheetToUpdate.Tasks.Clear();
+                    sheetToUpdate.Holidays.Clear();
+
+                    sheetToUpdate.Tasks = sheet.Tasks;
+                    sheetToUpdate.Holidays = sheet.Holidays;
+                }
             }
             await _context.SaveChangesAsync();
 
