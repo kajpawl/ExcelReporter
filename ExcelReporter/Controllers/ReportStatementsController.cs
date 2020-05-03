@@ -7,8 +7,10 @@ using Excel_Reader.Models;
 using ExcelReporter.App;
 using ExcelReporter.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace ExcelReporter.Controllers
 {
@@ -86,15 +88,17 @@ namespace ExcelReporter.Controllers
 
             var bytes = System.IO.File.ReadAllBytes(filePath);
             return File(bytes, mimeType, fileName);
-
         }
 
         // POST: api/ReportStatements/{userLogin}
         [HttpPost("{userLogin}")]
-        public async Task<IEnumerable<ProjectSheet>> Post(string userLogin, [FromBody] string reportPath)
+        public async Task<IEnumerable<ProjectSheet>> Post(string userLogin, [FromForm] IFormFile sentFile)
         {
-            FileInfo fileInfo = new FileInfo(reportPath);
-            var sheetList = _reportToDbManager.GetReportDataFromFile(fileInfo, userLogin);
+            using var stream = new MemoryStream();
+            await sentFile.CopyToAsync(stream);
+
+            var file = new ExcelPackage(stream);
+            var sheetList = _reportToDbManager.GetReportDataFromFile(file, userLogin);
 
             foreach (var sheet in sheetList)
             {
@@ -110,10 +114,13 @@ namespace ExcelReporter.Controllers
 
         // PUT: api/ReportStatements/{userLogin}
         [HttpPut("{userLogin}")]
-        public async Task<IEnumerable<ProjectSheet>> Put(string userLogin, [FromBody] string reportPath)
+        public async Task<IEnumerable<ProjectSheet>> Put(string userLogin, [FromForm] IFormFile sentFile)
         {
-            FileInfo fileInfo = new FileInfo(reportPath);
-            var sheetList = _reportToDbManager.GetReportDataFromFile(fileInfo, userLogin);
+            using var stream = new MemoryStream();
+            await sentFile.CopyToAsync(stream);
+
+            var file = new ExcelPackage(stream);
+            var sheetList = _reportToDbManager.GetReportDataFromFile(file, userLogin);
 
             foreach (var sheet in sheetList)
             {

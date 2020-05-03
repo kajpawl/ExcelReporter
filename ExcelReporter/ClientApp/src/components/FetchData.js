@@ -6,7 +6,11 @@ export class FetchData extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { forecasts: [], loading: true };
+    this.state = {
+      forecasts: [],
+      loading: true,
+      uploadedFile: null,
+    };
   }
 
   componentDidMount() {
@@ -45,11 +49,43 @@ export class FetchData extends Component {
 
     return (
       <div>
+      <div>
+        <form>
+          <div>
+            <label>Select file to upload</label>
+              <input type="file" onChange={(e) => this.setState({ uploadedFile: e.currentTarget.files[0] })} />
+          </div>
+          <button onClick={this.handleFileUpload}>Upload!</button>
+        </form>
+      </div>
         <h1 id="tabelLabel" >Weather forecast</h1>
         <p>This component demonstrates fetching data from the server.</p>
         {contents}
       </div>
     );
+  }
+
+  handleFileUpload = async e => {
+    e.preventDefault();
+
+    const userName = 'testUser';
+
+    const formData = new FormData();
+    formData.append("sentFile", this.state.uploadedFile);
+
+    const token = await authService.getAccessToken();
+    if (this.state.uploadedFile) {
+      fetch(`api/ReportStatements/${userName}`, {
+        method: 'post',
+        headers: !token ? {} : { 'Authorization': `Bearer ${token}` },
+        body: formData
+      })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+      })
+    }
+    else return;
   }
 
   async populateWeatherData() {
@@ -60,9 +96,10 @@ export class FetchData extends Component {
     const data = await response.json();
       this.setState({ forecasts: data, loading: false });
 
+    //POST request with location string as body
     //const reqBody = 'D:/file.xlsx';
     //fetch('api/ReportStatements/testUser', {
-    //  method: "post",
+    //  method: 'post',
     //  headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
     //  body: JSON.stringify(reqBody)
     //}).then(res => res.json())
@@ -70,18 +107,19 @@ export class FetchData extends Component {
     //    console.log(res);
     //  })
 
-    const userName = 'testUser';
-    fetch(`api/ReportStatements/${userName}/GetFile`, {
-      headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-    }).then(response => response.blob())
-      .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      let a = document.createElement('a');
-      a.href = url;
-      a.download = userName + '.xlsx';
-      document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-      a.click();
-      a.remove();
-    })
+    // GET request -> receive generated file
+    // const userName = 'testUser';
+    // fetch(`api/ReportStatements/${userName}/GetFile`, {
+    //   headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    // }).then(response => response.blob())
+    //   .then(blob => {
+    //   const url = window.URL.createObjectURL(blob);
+    //   let a = document.createElement('a');
+    //   a.href = url;
+    //   a.download = userName + '.xlsx';
+    //   document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+    //   a.click();
+    //   a.remove();
+    // })
   }
 }

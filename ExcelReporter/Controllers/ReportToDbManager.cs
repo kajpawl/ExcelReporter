@@ -8,11 +8,11 @@ namespace ExcelReporter.App
 {
     public class ReportToDbManager
     {
-        public IEnumerable<ProjectSheet> GetReportDataFromFile(FileInfo fileInfo, string domainLogin)
+        public IEnumerable<ProjectSheet> GetReportDataFromFile(ExcelPackage sentFile, string domainLogin)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using var sourceExcel = new ExcelPackage(fileInfo);
+            using var sourceExcel = sentFile;
             var projectSheets = sourceExcel.Workbook.Worksheets;
             var userId = domainLogin;
             var columnNames = Utilities.ReportColumnNames;

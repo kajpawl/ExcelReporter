@@ -47,7 +47,6 @@ namespace ExcelReporter.App
                     }
 
                     excelWorksheet.Cells[2, 1].LoadFromArrays(taskList);
-
                 }
 
                 var path = @"D:\" + userLogin + ".xlsx";
